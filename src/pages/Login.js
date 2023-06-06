@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import Axios from 'axios';
+import axios from 'axios';
+
 
 
 const Login = () => {
@@ -14,12 +15,26 @@ const Login = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        
-        Axios.post('http://localhost:8000/token', fData)
-            .then(res => {
-              console.log(res.data)
-              Axios.defaults.headers.common['Authorization'] = `Bearer ${res.data["access_token"]}`
-            })
+      
+          axios.post("http://localhost:8000/token", fData).then((response) => {
+      
+            if (response.status === 200) {
+              axios.defaults.headers.common[
+                "Authorization"
+              ] = `Bearer ${response.data["access_token"]}`;
+              
+              axios
+                .post("http://localhost:8000/userinfo")
+                .then((response) => {
+                  console.log(response.data);
+                })
+                .catch((error) => {
+                  console.log(error);
+                });
+                
+              //history.push("/");
+            }
+          });
         };
 
 
