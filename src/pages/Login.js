@@ -15,7 +15,6 @@ const Login = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-          console.log("login.handlesubmit")
           axios.post("http://localhost:8000/token", fData).then((response) => {
       
             if (response.status === 200) {
@@ -26,9 +25,17 @@ const Login = () => {
               
               localStorage.setItem("access_token", response.data["access_token"])
               localStorage.setItem("token_type", response.data["token_type"])
+              localStorage.setItem("refresh_token", response.data["refresh_token"])
               window.location.replace("/");
             }
           })
+          .catch(error => {
+            if(error.request.status===401){
+              alert("login failed")
+            }else{
+              alert("System Error\nlogin-1");
+            }
+          });
         };
 
 

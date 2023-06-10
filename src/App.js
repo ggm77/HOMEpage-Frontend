@@ -23,11 +23,6 @@ const App = () => {
   }
 
   useEffect(() => {
-    // console.log("useeffect")
-    // axios
-    // .post("http://localhost:8000/userinfo")
-    // .then()
-    // .catch(error => {logout();})
     if(localStorage.getItem("access_token")){
       setIsLogin(true);
     }else{
@@ -49,7 +44,8 @@ const App = () => {
           <button onClick={ serch }>serch</button>
           {
             isLogin ?
-            <button onClick={logout}>Logout</button>:
+            <button onClick={logout}>Logout</button>
+            :
             <Link to="/login">Login</Link>
           }
           
