@@ -15,31 +15,28 @@ const Login = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-      
+          console.log("login.handlesubmit")
           axios.post("http://localhost:8000/token", fData).then((response) => {
       
             if (response.status === 200) {
               axios.defaults.headers.common[
                 "Authorization"
               ] = `Bearer ${response.data["access_token"]}`;
+
               
-              axios
-                .post("http://localhost:8000/userinfo")
-                .then((response) => {
-                  console.log(response.data);
-                })
-                .catch((error) => {
-                  console.log(error);
-                });
-                
-              //history.push("/");
+              localStorage.setItem("access_token", response.data["access_token"])
+              localStorage.setItem("token_type", response.data["token_type"])
+              window.location.replace("/");
             }
-          });
+          })
         };
 
 
     return(
-        <div className='login-wrapper'>
+      <div style={{ 
+        display: 'flex', justifyContent: 'center', alignItems: 'center', 
+        width: '100%', height: '100vh'
+        }}>
             <form>
                 <h1>Login</h1>
                 <label>
@@ -50,6 +47,8 @@ const Login = () => {
                     <p>Password</p>
                     <input type='password' onChange={e => setPassword(e.target.value)}/>
                 </label>
+                <br/>
+                <br/>
                 <div>
                     <button onClick={ handleSubmit }>Submit</button>
                 </div>
