@@ -9,6 +9,10 @@ const Home = () => {
         window.location.assign("/myprofile");
     }
 
+    const goToMusicPlayer = () => {
+        window.location.assign("/musicplayer")
+    }
+
 
 
     const [userType, setUserType] = useState();
@@ -70,6 +74,7 @@ const Home = () => {
             <h3>{ userType }</h3>
             <h4>{ username }</h4>
             <button onClick={ goToMyprofile }>myprofile</button>
+            <button onClick={ goToMusicPlayer }>MusicPlayer</button>
         </div>
     );
 };
