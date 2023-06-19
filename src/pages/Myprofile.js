@@ -1,16 +1,9 @@
-import React, { useState, useEffect } from "react";
-import axios from 'axios';
+import axios from "axios";
+import React, { useState, useEffect, useSyncExternalStore } from "react";
 
+const Myprofile = () => {
 
-
-const Home = () => {
-
-    const goToMyprofile = () => {
-        window.location.assign("/myprofile");
-    }
-
-
-
+    /* */
     const [userType, setUserType] = useState();
     const [username, setUsername] = useState();
 
@@ -18,7 +11,6 @@ const Home = () => {
         axios.defaults.headers.common[
             "Authorization"
           ] = `Bearer ${localStorage.getItem(["access_token"])}`;
-        console.log("home.useeffect")
         axios
         .post("http://localhost:8000/userinfo")
         .then((response) => {
@@ -27,7 +19,7 @@ const Home = () => {
             setUsername(response.data["username"]);
         })
         .catch((error) => {
-            //리프레시 토큰 제출
+            //refreshToken
             const rData = new FormData();
             rData.append("refresh_token", localStorage.getItem("refresh_token"))
             console.log(rData);
@@ -43,7 +35,7 @@ const Home = () => {
                     localStorage.setItem("access_token", response.data["access_token"])
                     localStorage.setItem("token_type", response.data["token_type"])
                     localStorage.setItem("refresh_token", response.data["refresh_token"])
-                    window.location.assign("/");
+                    window.location.assign("/myprofile");
             }
             })
             .catch(error => {
@@ -58,20 +50,48 @@ const Home = () => {
         })},[]
     
     );
+    /* */
 
+    const [currentPassword, setCurrentPassword] = useState();
+    const [newPassword, setNewPassword] = useState();
 
-    
+    const fData = new FormData();
+
+    fData.append("username", username);
+    fData.append("currentPassword", currentPassword);
+    fData.append("newPassword",newPassword);
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        axios.post("http://localhost:8000/changepassword",fData)
+        .then(res=>{console.log(res)})
+        .catch(err=>{console.log(err)})
+    };
 
 
     return(
         <div>
-            <h1>Main page</h1>
-            <h2>My NAS server</h2>
-            <h3>{ userType }</h3>
-            <h4>{ username }</h4>
-            <button onClick={ goToMyprofile }>myprofile</button>
+            <br/>
+            <div className="changePassword">
+                <div>
+                    <p>change { username }'s password</p>
+                </div>
+                <br/>
+                <div>
+                    <p>current password</p>
+                    <input type="password" onChange={e => {setCurrentPassword(e.target.value)}}/>
+                </div>
+                <br/>
+                <div>
+                    <p>new password</p>
+                    <input type="password" onChange={e => {setNewPassword(e.target.value)}}/>
+                </div>
+                <div>
+                    <button onClick={ handleSubmit }>Submit</button>
+                </div>
+            </div>
         </div>
     );
 };
 
-export default Home;
+export default Myprofile;

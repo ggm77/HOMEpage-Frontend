@@ -26,7 +26,7 @@ const Login = () => {
               localStorage.setItem("access_token", response.data["access_token"])
               localStorage.setItem("token_type", response.data["token_type"])
               localStorage.setItem("refresh_token", response.data["refresh_token"])
-              window.location.replace("/");
+              window.location.assign("/");
             }
           })
           .catch(error => {
