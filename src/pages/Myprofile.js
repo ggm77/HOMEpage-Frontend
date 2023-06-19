@@ -64,8 +64,11 @@ const Myprofile = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
         axios.post("http://localhost:8000/changepassword",fData)
-        .then(res=>{console.log(res)})
-        .catch(err=>{console.log(err)})
+        .then(res=>{
+            console.log(res);
+            window.location.assign("/myprofile");
+        })
+        .catch(err=>{alert("Password not correct")})
     };
 
 
