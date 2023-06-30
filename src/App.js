@@ -5,8 +5,12 @@ import './App.css';
 import Home from './pages/Home.js';
 import Login from './pages/Login.js';
 import Myprofile from './pages/Myprofile.js';
+import MusicList from './pages/MusicList.js';
 import MusicPlayer from './pages/MusicPlayer.js';
+import VideoList from './pages/VideoList.js';
+import VideoPlayer from './pages/VideoPlayer.js';
 import axios, { all } from 'axios';
+
 
 
 
@@ -56,7 +60,10 @@ const App = () => {
           <Route path='/' exact element={ <Home /> }></Route>
           <Route path='/login' element={ <Login /> }></Route>
           <Route path='/myprofile' element={ <Myprofile /> }></Route>
+          <Route path='/musiclist' element={ <MusicList /> }></Route>
           <Route path='/musicplayer' element={ <MusicPlayer /> }></Route>
+          <Route path='/videolist' element={ <VideoList /> }></Route>
+          <Route path='/videoplayer' element={ <VideoPlayer /> }></Route>
         </Routes>
        </BrowserView>
 
@@ -80,7 +87,10 @@ const App = () => {
           <Route path='/' exact element={ <Home /> }></Route>
           <Route path='/login' element={ <Login /> }></Route>
           <Route path='/myprofile' element={ <Myprofile /> }></Route>
+          <Route path='/musiclist' element={ <MusicList /> }></Route>
           <Route path='/musicplayer' element={ <MusicPlayer /> }></Route>
+          <Route path='/videolist' element={ <VideoList /> }></Route>
+          <Route path='/videoplayer' element={ <VideoPlayer /> }></Route>
         </Routes>
        </MobileView>
     </div>

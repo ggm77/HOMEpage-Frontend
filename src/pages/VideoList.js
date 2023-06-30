@@ -1,7 +1,16 @@
 import axios from "axios";
-import React, { useState, useEffect, useSyncExternalStore } from "react";
+import React, { useState, useEffect } from "react";
 
-const Myprofile = () => {
+const VideoList = () => {
+
+    const apiurl = "http://localhost:8000";
+
+    const [videolist, setVideolist] = useState([]);
+    const [videolistLen, setVideolistLen] = useState();
+
+    const refresh = () => {
+        window.location.replace("/videolist")
+    }
 
     /* */
     const [userType, setUserType] = useState();
@@ -12,7 +21,7 @@ const Myprofile = () => {
             "Authorization"
           ] = `Bearer ${localStorage.getItem(["access_token"])}`;
         axios
-        .post("http://localhost:8000/userinfo")
+        .post(apiurl + "/userinfo")
         .then((response) => {
             // console.log(response.data);
             setUserType(response.data["userType"])
@@ -22,9 +31,9 @@ const Myprofile = () => {
             //refreshToken
             const rData = new FormData();
             rData.append("refresh_token", localStorage.getItem("refresh_token"))
-            console.log(rData);
+            // console.log(rData);
             axios
-            .post("http://localhost:8000/refreshToken",rData)
+            .post(apiurl + "/refreshToken",rData)
             .then(response=>{
                 if (response.status === 200) {
                     axios.defaults.headers.common[
@@ -35,7 +44,7 @@ const Myprofile = () => {
                     localStorage.setItem("access_token", response.data["access_token"])
                     localStorage.setItem("token_type", response.data["token_type"])
                     localStorage.setItem("refresh_token", response.data["refresh_token"])
-                    window.location.assign("/myprofile");
+                    window.location.assign("/videolist");
             }
             })
             .catch(error => {
@@ -47,54 +56,52 @@ const Myprofile = () => {
                 alert("System Error\nhome-1");
             }
             });
-        })},[]
+        });
+    
+    },[]
     
     );
     /* */
 
-    const [currentPassword, setCurrentPassword] = useState();
-    const [newPassword, setNewPassword] = useState();
 
-    const fData = new FormData();
-
-    fData.append("username", username);
-    fData.append("currentPassword", currentPassword);
-    fData.append("newPassword",newPassword);
-
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        axios.post("http://localhost:8000/changepassword",fData)
+    useEffect(() => {
+        axios
+        .post(apiurl + "/getvideolist")
         .then(res=>{
             // console.log(res);
-            window.location.assign("/");
+            setVideolist(res.data.data);
+            setVideolistLen(res.data.len);
         })
-        .catch(err=>{alert("Password not correct")})
-    };
+        .catch(err=>{ console.log(err) })
+    },[])
 
 
     return(
         <div>
-            <br/>
-            <div className="changePassword">
-                <div>
-                    <p>change { username }'s password</p>
-                </div>
-                <br/>
-                <div>
-                    <p>current password</p>
-                    <input type="password" onChange={e => {setCurrentPassword(e.target.value)}}/>
-                </div>
-                <br/>
-                <div>
-                    <p>new password</p>
-                    <input type="password" onChange={e => {setNewPassword(e.target.value)}}/>
-                </div>
-                <div>
-                    <button onClick={ handleSubmit }>Submit</button>
-                </div>
+        <div className="player">
+            <p>Video Player</p>
+        </div>
+        <div className="refresh">
+            <button onClick={ refresh }>Refresh</button>
+        </div>
+        <div className="playlist">
+            <h3>Play List</h3>
+            <h4>Number of video : { videolistLen }</h4>
+            <div className="filelist">
+                {videolist.map((it) => {
+                    return(
+                        <div key={ it.id }>
+                            {/* <p>{ it.data }</p> */}
+                            <form method="GET" action="/videoplayer">
+                                <button type="submit" name="videoName" value={ it.data }>{ it.data }</button>
+                            </form>
+                        </div>
+                    )
+                })}
             </div>
         </div>
+    </div>
     );
 };
 
-export default Myprofile;
+export default VideoList;

@@ -1,18 +1,16 @@
 import axios from "axios";
-import React, { useState, useEffect } from "react";
-
-
-
+import React, { useEffect, useState } from "react";
 
 const MusicPlayer = () => {
 
+    const apiurl = "http://localhost:8000";
 
-    const [musiclist, setMusiclist] = useState([]);
-    const [musiclistLen, setMusiclistLen] = useState();
+    const [musicFile, setMusicFile] = useState();
 
-    const refresh = () => {
-        window.location.replace("/musicplayer")
-    }
+    const current = decodeURI(window.location.href);
+    const search = current.split("?")[1];
+    const params = new URLSearchParams(search);
+    const keyword = params.get('musicName');
 
 
     /* */
@@ -22,11 +20,11 @@ const MusicPlayer = () => {
     useEffect(() => {
         axios.defaults.headers.common[
             "Authorization"
-          ] = `Bearer ${localStorage.getItem(["access_token"])}`;
+        ] = `Bearer ${localStorage.getItem(["access_token"])}`;
         axios
-        .post("http://localhost:8000/userinfo")
+        .post(apiurl + "/userinfo")
         .then((response) => {
-            console.log(response.data);
+            // console.log(response.data);
             setUserType(response.data["userType"])
             setUsername(response.data["username"]);
         })
@@ -34,9 +32,9 @@ const MusicPlayer = () => {
             //refreshToken
             const rData = new FormData();
             rData.append("refresh_token", localStorage.getItem("refresh_token"))
-            console.log(rData);
+            // console.log(rData);
             axios
-            .post("http://localhost:8000/refreshToken",rData)
+            .post(apiurl + "/refreshToken",rData)
             .then(response=>{
                 if (response.status === 200) {
                     axios.defaults.headers.common[
@@ -47,7 +45,7 @@ const MusicPlayer = () => {
                     localStorage.setItem("access_token", response.data["access_token"])
                     localStorage.setItem("token_type", response.data["token_type"])
                     localStorage.setItem("refresh_token", response.data["refresh_token"])
-                    window.location.assign("/musicplayer");
+                    window.location.assign("/musiclist");
             }
             })
             .catch(error => {
@@ -60,50 +58,28 @@ const MusicPlayer = () => {
             }
             });
         });
-    
+
     },[]
-    
+
     );
     /* */
 
+    const fData = new FormData();
+    fData.append("musicName",keyword)
 
-    useEffect(() => {
+
+    useEffect( () => {
         axios
-        .post("http://localhost:8000/getmusiclist")
-        .then(res=>{
-            console.log(res);
-            setMusiclist(res.data.data);
-            setMusiclistLen(res.data.len);
-        })
-        .catch(err=>{ console.log(err) })
+        .post(apiurl+"/getmusicfile",fData)
+        .then(res => {})
     },[])
-
 
     return(
         <div>
-            <div className="player">
-                <p>Music Player</p>
-            </div>
-            <div className="refresh">
-                <button onClick={ refresh }>Refresh</button>
-            </div>
-            <div className="playlist">
-                <h3>Play List</h3>
-                <h4>Number of music : { musiclistLen }</h4>
-                <div className="filelist">
-                    {musiclist.map((it) => {
-                        return(
-                            <div key={ it.id }>
-                                <p>{ it.data }</p>
-                                <br/>
-                            </div>
-                        )
-                    })}
-                </div>
-            </div>
+            <h4>PlayerPage</h4>
+            <h5>{ keyword }</h5>
         </div>
-    )
-
+    );
 };
 
 export default MusicPlayer;

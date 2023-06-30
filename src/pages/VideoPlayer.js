@@ -1,46 +1,40 @@
-import React, { useState, useEffect } from "react";
-import axios from 'axios';
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+
+const VideoPlayer = () => {
+
+    const apiurl = "http://localhost:8000";
+
+    const [videoFile, setVideoFile] = useState();
+
+    const current = decodeURI(window.location.href);
+    const search = current.split("?")[1];
+    const params = new URLSearchParams(search);
+    const keyword = params.get('videoName');
 
 
-
-const Home = () => {
-
-    const goToMyprofile = () => {
-        window.location.assign("/myprofile");
-    }
-
-    const goToMusicList = () => {
-        window.location.assign("/musiclist")
-    }
-
-    const goToVideoList = () => {
-        window.location.assign("/videolist")
-    }
-
-
-
+    /* */
     const [userType, setUserType] = useState();
     const [username, setUsername] = useState();
 
     useEffect(() => {
         axios.defaults.headers.common[
             "Authorization"
-          ] = `Bearer ${localStorage.getItem(["access_token"])}`;
-        // console.log("home.useeffect")
+        ] = `Bearer ${localStorage.getItem(["access_token"])}`;
         axios
-        .post("http://localhost:8000/userinfo")
+        .post(apiurl + "/userinfo")
         .then((response) => {
             // console.log(response.data);
             setUserType(response.data["userType"])
             setUsername(response.data["username"]);
         })
         .catch((error) => {
-            //리프레시 토큰 제출
+            //refreshToken
             const rData = new FormData();
             rData.append("refresh_token", localStorage.getItem("refresh_token"))
             // console.log(rData);
             axios
-            .post("http://localhost:8000/refreshToken",rData)
+            .post(apiurl + "/refreshToken",rData)
             .then(response=>{
                 if (response.status === 200) {
                     axios.defaults.headers.common[
@@ -51,7 +45,7 @@ const Home = () => {
                     localStorage.setItem("access_token", response.data["access_token"])
                     localStorage.setItem("token_type", response.data["token_type"])
                     localStorage.setItem("refresh_token", response.data["refresh_token"])
-                    window.location.assign("/");
+                    window.location.assign("/videolist");
             }
             })
             .catch(error => {
@@ -63,25 +57,33 @@ const Home = () => {
                 alert("System Error\nhome-1");
             }
             });
-        })},[]
-    
+        });
+
+    },[]
+
     );
+    /* */
 
+    // const videoStreaming = () => {
+    //     const fData = new FormData();
+    //     fData.append("videoName",keyword)
 
-    
-
+    //     axios
+    //     .post(apiurl+"/getvideofile",fData)
+    //     .then(res => {})
+    // };
 
     return(
         <div>
-            <h1>Main page</h1>
-            <h2>My NAS server</h2>
-            <h3>{ userType }</h3>
-            <h4>{ username }</h4>
-            <button onClick={ goToMyprofile }>myprofile</button>
-            <button onClick={ goToMusicList }>MusicList</button>
-            <button onClick={ goToVideoList }>VideoList</button>
+            <h4>PlayerPage</h4>
+            <h5>{ keyword }</h5>
+            <div className="videoStreaming">
+                <video width="1200" controls muted="muted">
+                    <source src={ "http://localhost:8000/getvideofile/" + keyword } type="video/mp4" />
+                </video>
+            </div>
         </div>
     );
 };
 
-export default Home;
+export default VideoPlayer;
