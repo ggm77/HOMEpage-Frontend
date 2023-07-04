@@ -79,7 +79,7 @@ const VideoPlayer = () => {
             <h5>{ keyword }</h5>
             <div className="videoStreaming">
                 <video width="1200" controls muted="muted">
-                    <source src={ "http://localhost:8000/getvideofile/" + keyword } type="video/mp4" />
+                    <source src={ "http://localhost:8000/getvideofile/" + keyword + "?token=" + localStorage.getItem(["access_token"])} type="video/mp4" />
                 </video>
             </div>
         </div>
