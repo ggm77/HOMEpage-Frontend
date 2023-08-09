@@ -71,7 +71,11 @@ const MusicPlayer = () => {
     useEffect( () => {
         axios
         .post(apiurl+"/getmusicfile",fData)
-        .then(res => {})
+        .then(res => {})//audio streaming
+        .catch(err => {
+            alert("File dose not exist.");
+            window.location.replace("/musiclist");
+        });
     },[])
 
     return(
